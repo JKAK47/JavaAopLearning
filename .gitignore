@@ -1,0 +1,36 @@
+*.class
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# target folder   根目录下的target
+target/*
+
+# 子模块的target目录
+
+/*/target/*
+
+.classpath
+
+.project
+
+.settings/*
+/*/.settings/*
+./*.iml
+*.iml
+./*/*.iml
+.idea/*
+bin/*
+/bin/*
+/logs/*
