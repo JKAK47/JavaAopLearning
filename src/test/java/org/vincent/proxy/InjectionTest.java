@@ -3,7 +3,7 @@ package org.vincent.proxy;
 
 import org.vincent.annon.SevenAnnoInjectionHandle;
 import org.vincent.annon.example.DogImp;
-import org.vincent.proxy.service.AnimalInterface;
+import org.vincent.service.AnimalInterface;
 
 /**
  * @author PengRong  IOC 依赖注入注解定义的属性

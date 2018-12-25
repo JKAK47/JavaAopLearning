@@ -1,5 +1,6 @@
 package org.vincent.proxy;
 
+import org.vincent.proxy.staticproxy.Cat;
 import org.vincent.proxy.staticproxy.FeederProxy;
 import org.vincent.proxy.staticproxy.Lion;
 
@@ -13,14 +14,14 @@ import org.vincent.proxy.staticproxy.Lion;
 public class staticProxyTest {
     public static void main(String[] args) {
         Lion lion = new Lion();
-        lion.setName("狮子王");
+        lion.setName("狮子 小王");
         lion.setRunningSpeed(100);
         /**
          * new 静态代理类，静态代理类在编译前已经创建好了，和动态代理的最大区别点
          */
-        FeederProxy proxy = new FeederProxy();
-        proxy.setCat(lion);
-        System.out.println(Thread.currentThread().getName() + proxy.eatFood("水牛"));
+        Cat proxy = new FeederProxy(lion);
+
+        System.out.println(Thread.currentThread().getName()+" -- " + proxy.eatFood("水牛"));
         proxy.running();
     }
 }

@@ -1,4 +1,4 @@
-package org.vincent.proxy.service;
+package org.vincent.service;
 
 /**
  * 动态代理的业务接口定义

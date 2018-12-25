@@ -3,8 +3,8 @@ package org.vincent.proxy;
 import java.lang.reflect.Method;
 
 import org.vincent.annon.example.DogImp;
-import org.vincent.proxy.service.AOPMethod;
-import org.vincent.proxy.service.AnimalInterface;
+import org.vincent.service.AOPMethod;
+import org.vincent.service.AnimalInterface;
 
 public class AOPTest {
 

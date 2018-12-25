@@ -11,8 +11,17 @@ package org.vincent.proxy.staticproxy;
 public class FeederProxy implements Cat {
     private Cat cat;
 
+    public FeederProxy(){}
+    public FeederProxy(Cat cat) {
+        if (cat instanceof Cat) {
+            this.cat = cat;
+        }
+    }
+
     public void setCat(Cat cat) {
-        this.cat = cat;
+        if (cat instanceof Cat) {
+            this.cat = cat;
+        }
     }
 
     @Override

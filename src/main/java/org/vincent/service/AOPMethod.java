@@ -1,4 +1,4 @@
-package org.vincent.proxy.service;
+package org.vincent.service;
 
 import java.lang.reflect.Method;
 

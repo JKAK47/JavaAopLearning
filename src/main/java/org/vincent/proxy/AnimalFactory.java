@@ -3,7 +3,7 @@ package org.vincent.proxy;
 import java.lang.reflect.Proxy;
 
 import org.vincent.annon.SevenAnnoInjectionHandle;
-import org.vincent.proxy.service.AOPMethod;
+import org.vincent.service.AOPMethod;
 
 /**
  * 根据 传进来的委托实例引用创建并返回代理类引用

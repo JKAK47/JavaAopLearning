@@ -1,6 +1,6 @@
 package org.vincent.proxy;
 
-import org.vincent.proxy.service.AOPMethod;
+import org.vincent.service.AOPMethod;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
