@@ -407,7 +407,7 @@ public class JdkDynamicProxyTest {
      */
     public  static  void  saveClass(String className,Class<?>[] interfaces,String pathdir){
         /**
-         * 第一个参数是 代理类 名 。
+         * 第一个参数是 生成的动态代理类类名.
          * 第二个参数是 代理类需要实现的接口
          */
         byte[] classFile = ProxyGenerator.generateProxyClass(className, interfaces);
@@ -572,10 +572,50 @@ dk为我们的生成了一个叫$Proxy0（这个名字后面的0是编号，有�
 
 代理类调用自己方法时，通过自身持有的中介类对象引用来调用中介类对象的invoke方法，从而达到代理执行被代理对象的方法。也就是说，动态代理Proxy类提供了模板实现，对外提供扩展点，外部通过实现InvocationHandler接口将被代理类纳入JDK代理类Proxy。
 
+### 一个典型的动态代理创建对象过程可分为以下四个步骤：
+1、通过实现InvocationHandler接口创建自己的调用处理器 IvocationHandler handler = new InvocationHandlerImpl(...);
+2、通过为Proxy类指定ClassLoader对象和一组interface创建动态代理类类文件，默认JDK并不会保存这个文件到文件中；可以保存起来观察生成的代理类结构
+Class clazz = Proxy.getProxyClass(classLoader,new Class[]{...});
+3、通过上面新建的代理clazz的反射机制获取动态代理类的一个构造函数，其构造函数入参类型是调用处理器接口(IvocationHandler)类型
+Constructor constructor = clazz.getConstructor(new Class[]{InvocationHandler.class});
+4、通过构造函数实例创建代理类实例，此时需将调用处理器对象作为参数被传入
+Interface Proxy = (Interface)constructor.newInstance(new Object[] (handler));
+为了简化对象创建过程，Proxy类中的newInstance工具方法封装了2~4，只需两步即可完成代理对象的创建。
+
 ### JDK动态代理总结
 生成的代理类：$Proxy0 extends Proxy implements Person，我们看到代理类继承了Proxy类，所以也就决定了java动态代理只能对接口进行代理，Java的继承机制决定了JDK动态代理类们无法实现对 类 的动态代理。
+### 动态代理不足
+动态代理只能对接口产生代理，不能对类产生代理
+
+
 
 ## CGlib 代理类实现 
+cglib是针对类来实现代理的，他的原理是对代理的目标类生成一个子类，并覆盖其中方法实现增强，因为底层是基于创建被代理类的一个子类，所以
+
+但因为采用的是继承，所以不能对final修饰的类进行代理。final修饰的类不可继承。
+### 导入maven 依赖
+**cglib 是基于asm 字节修改技术。导入 cglib 会间接导入 asm, ant, ant-launcher 三个jar 包。**
+```xml
+  <!-- cglib 动态代理依赖 begin -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 直接引用  -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>5.2</version>
+        </dependency>
+        <!-- cglib 动态代理依赖 stop -->
+```
 
 ## 参考
 ---
@@ -583,12 +623,14 @@ dk为我们的生成了一个叫$Proxy0（这个名字后面的0是编号，有�
 
 [保存Java代理框架生成的类文件](https://blog.csdn.net/iteye_6889/article/details/82552672)
 
-
-还没看
-
 [java的动态代理机制详解](http://www.cnblogs.com/xiaoluo501395377/p/3383130.html)
 
 [彻底理解JAVA动态代理](https://www.cnblogs.com/flyoung2008/archive/2013/08/11/3251148.html)
+还没看
+
+
+
+
 
 [Java动态代理的两种实现方法](https://blog.csdn.net/heyutao007/article/details/49738887)
 
