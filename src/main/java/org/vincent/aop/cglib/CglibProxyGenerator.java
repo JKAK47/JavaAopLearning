@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 public class CglibProxyGenerator {
     /**
      * @param target 需要被代理的委托类对象
-     * @param aspect 切面对象
+     * @param aspect 切面对象,改对象方法将在切点方法之前或之后执行
      * @return
      */
     public static  Object generatorCglibProxy(final Object target, final IAspect aspect){

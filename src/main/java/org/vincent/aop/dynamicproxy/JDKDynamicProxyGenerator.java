@@ -17,7 +17,7 @@ import java.lang.reflect.Proxy;
 public class JDKDynamicProxyGenerator {
     /**
      * @param target 需要被代理的委托类对象
-     * @param aspect 切面对象
+     * @param aspect 切面对象,改对象方法将在切点方法之前或之后执行
      * @return
      */
     public static Object generatorJDKProxy(Object target, final IAspect aspect) {
