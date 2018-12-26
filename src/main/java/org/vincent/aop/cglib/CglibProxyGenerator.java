@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
  */
 public class CglibProxyGenerator {
     /**
-     * @param target 需要被代理的委托类对象
+     * @param target 需要被代理的委托类对象，Cglib需要继承该类生成子类
      * @param aspect 切面对象,改对象方法将在切点方法之前或之后执行
      * @return
      */
@@ -29,6 +29,7 @@ public class CglibProxyGenerator {
         enhancer.setSuperclass(target.getClass());
         //3.3 设置回调
         enhancer.setCallback(new MethodInterceptor() {
+
             @Override
             public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy)
                     throws Throwable {
