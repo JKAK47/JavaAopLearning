@@ -7,7 +7,7 @@
 - CGlib代理模式
 
 ## 静态代理实现
-**静态代理是代理类在编译期间就创建好了，不是编译器生成的代理类，而是手动创建的类。在编译时就已经将接口，被代理类，代理类等确定下来。**
+**静态代理是代理类在编译期间就创建好了，不是编译器生成的代理类，而是手动创建的类。在编译时就已经将接口，被代理类，代理类等确定下来。**，软件设计中所指的代理一般是指静态代理，也就是在代码中显式指定的代理。
 ### 实现步骤
 - 委托类和代理类之间的约束接口Cat
 - 约束接口实现类 Lion，实现 Cat 接口，委托角色
@@ -585,12 +585,15 @@ Interface Proxy = (Interface)constructor.newInstance(new Object[] (handler));
 ### JDK动态代理总结
 生成的代理类：$Proxy0 extends Proxy implements Person，我们看到代理类继承了Proxy类，所以也就决定了java动态代理只能对接口进行代理，Java的继承机制决定了JDK动态代理类们无法实现对 类 的动态代理。
 ### 动态代理不足
-动态代理只能对接口产生代理，不能对类产生代理
+JDK动态代理的代理对象在创建时，需要实现业务实现类所实现的接口作为参数。如果业务实现类是没有实现接口而是直接定义业务方法的话，就无法使用JDK动态代理了。(JDK动态代理重要特点是代理接口)
+并且，如果业务实现类中新增了接口中没有的方法，这些方法是无法被代理的（因为无法被调用）。
+
+**动态代理只能对接口产生代理，不能对类产生代理**
 
 
 
 ## CGlib 代理类实现 
-cglib是针对类来实现代理的，他的原理是对代理的目标类生成一个子类，并覆盖其中方法实现增强，因为底层是基于创建被代理类的一个子类，所以
+cglib是针对类来实现代理的，他的原理是对代理的目标类生成一个子类，并覆盖其中方法实现增强，因为底层是基于创建被代理类的一个子类，所以它避免了JDK动态代理类的缺陷。
 
 但因为采用的是继承，所以不能对final修饰的类进行代理。final修饰的类不可继承。
 ### 导入maven 依赖
@@ -617,7 +620,198 @@ cglib是针对类来实现代理的，他的原理是对代理的目标类生成
         <!-- cglib 动态代理依赖 stop -->
 ```
 
+
+### 业务类实现
+cglib是针对类来实现代理的，原理是对指定的业务类生成他的一个子类，并覆盖其中的业务方法来实现代理。因为采用的是继承，所以不能对final修饰的类进行代理。
+```java
+package org.vincent.proxy.cglibproxy;
+
+/**
+ * @Package: org.vincent.proxy.cglibproxy <br/>
+ * @Description： Cglib 代理模式中 被代理的委托类 <br/>
+ * @author: lenovo <br/>
+ * @Company: PLCC <br/>
+ * @Copyright: Copyright (c) 2019 <br/>
+ * @Version: 1.0 <br/>
+ * @Modified By: <br/>
+ * @Created by lenovo on 2018/12/26-17:55 <br/>
+ */
+public class Dog {
+    public String  call() {
+        System.out.println("wang wang wang");
+        return "Dog ..";
+    }
+}
+
+```
+### 方法拦截器 实现 MethodInterceptor 接口
+```java
+ package org.vincent.proxy.cglibproxy;
+ 
+ import net.sf.cglib.proxy.Enhancer;
+ import net.sf.cglib.proxy.MethodInterceptor;
+ import net.sf.cglib.proxy.MethodProxy;
+ 
+ import java.lang.reflect.Method;
+ 
+ /**
+  * @Package: org.vincent.proxy.cglibproxy <br/>
+  * @Description： Cglib 方法拦截器,不用依赖被代理业务类的引用。  <br/>
+  * @author: lenovo <br/>
+  * @Company: PLCC <br/>
+  * @Copyright: Copyright (c) 2019 <br/>
+  * @Version: 1.0 <br/>
+  * @Modified By: <br/>
+  * @Created by lenovo on 2018/12/26-17:56 <br/>
+  */
+ public class CglibMethodInterceptor implements MethodInterceptor {
+ 
+     /**
+      * 用于生成cglib 动态代理类工具方法
+      * @param target 代表需要 被代理的 委托类的Class 对象
+      * @return
+      */
+     public Object CglibProxyGeneratory(Class target) {
+         /** 创建cglib 代理类 start */
+         // 创建加强器，用来创建动态代理类
+         Enhancer enhancer = new Enhancer();
+         // 为代理类指定需要代理的类，也即是父类
+         enhancer.setSuperclass(target);
+         // 设置方法拦截器回调引用，对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept() 方法进行拦截
+         enhancer.setCallback(this);
+         // 获取动态代理类对象并返回
+         return enhancer.create();
+         /** 创建cglib 代理类 end */
+     }
+ 
+     /**
+      * @param obj    代表生成的动态代理类
+      * @param method 代理类中被拦截的接口方法
+      * @param args   接口方法参数
+      * @param proxy  用于调用父类真正的业务类方法。
+      * @return
+      * @throws Throwable
+      */
+     @Override
+     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+         System.out.println("before");
+         MonitorUtil.start();
+         Object result = proxy.invokeSuper(obj, args);
+         System.out.println("after");
+         MonitorUtil.finish(method.getName());
+         return result;
+     }
+ }
+
+```
+### 一个切面，用于在方法拦截器中intercept 方法中调用真正业务方法之前 之后处理逻辑
+```java
+package org.vincent.proxy.cglibproxy;
+
+/**
+ * Created by PengRong on 2018/12/25.
+ * 方法用时监控类,作为一个切面 ，具有两个方法
+ */
+public class MonitorUtil {
+    private static ThreadLocal<Long> tl = new ThreadLocal<>();
+
+    public static void start() {
+        tl.set(System.currentTimeMillis());
+    }
+
+    /**
+     * 结束时打印耗时
+     * @param methodName 方法名
+     */
+    public static void finish(String methodName) {
+        long finishTime = System.currentTimeMillis();
+        System.out.println(methodName + "方法执行耗时" + (finishTime - tl.get()) + "ms");
+    }
+}
+
+```
+### Cglib测试类
+```java
+package org.vincent.proxy.cglibproxy;
+
+import net.sf.cglib.core.DebuggingClassWriter;
+import net.sf.cglib.proxy.Enhancer;
+import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.util.Properties;
+
+/**
+ * @Package: org.vincent.proxy.cglibproxy <br/>
+ * @Description： TODO <br/>
+ * @author: lenovo <br/>
+ * @Company: PLCC <br/>
+ * @Copyright: Copyright (c) 2019 <br/>
+ * @Version: 1.0 <br/>
+ * @Modified By: <br/>
+ * @Created by lenovo on 2018/12/26-18:05 <br/>
+ */
+public class CglibTest {
+    @Test
+    public void testCglib() throws Exception {
+
+        System.out.println(System.getProperty("user.dir"));
+        /** 开启 保存cglib生成的动态代理类类文件*/
+        saveGeneratedCGlibProxyFiles(System.getProperty("user.dir"));
+        /** 第一种方法: 创建cglib 代理类 start */
+        // 创建加强器，用来创建动态代理类
+        Enhancer enhancer = new Enhancer();
+        // 为代理类指定需要代理的类，也即是父类
+        enhancer.setSuperclass(Dog.class);
+        // new 一个新的方法拦截器
+        CglibMethodInterceptor cglibMethodInterceptor = new CglibMethodInterceptor();
+        // 设置方法拦截器回调引用，对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept() 方法进行拦截
+        enhancer.setCallback(cglibMethodInterceptor);
+        // 获取动态代理类对象并返回
+        Dog dog = (Dog) enhancer.create();
+        /** 创建cglib 代理类 end */
+        System.out.println(dog.call());
+
+        // 对于上面这几步，可以新增一个工具方法 放置在 CglibMethodInterceptor 里面；也就有了第二种方法
+        // new 一个新的方法拦截器，该拦截器还顺带一个用于创建代理类的工具方法。看起来简单很多
+        cglibMethodInterceptor = new CglibMethodInterceptor();
+        dog = (Dog) cglibMethodInterceptor.CglibProxyGeneratory(Dog.class);
+        System.out.println(dog.call());
+
+    }
+
+    /**
+     * 设置保存Cglib代理生成的类文件。
+     *
+     * @throws Exception
+     */
+    public void saveGeneratedCGlibProxyFiles(String dir) throws Exception {
+        Field field = System.class.getDeclaredField("props");
+        field.setAccessible(true);
+        Properties props = (Properties) field.get(null);
+        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, dir);//dir为保存文件路径
+        props.put("net.sf.cglib.core.DebuggingClassWriter.traceEnabled", "true");
+    }
+}
+
+```
+## 静态代理 动态代理 Cglib 动态代理
+
+静态代理是通过在代码中显式定义一个业务实现类一个代理，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；
+
+JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；
+
+CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；
+
+
+## AOP 实现案例
+
+### JDK动态代理 aop 实现方式
+
+### Cglib aop 实现方式
+
 ## 参考
+
 ---
 [java动态代理实现与原理详细分析](http://www.cnblogs.com/gonjan-blog/p/6685611.html)
 
@@ -629,12 +823,18 @@ cglib是针对类来实现代理的，他的原理是对代理的目标类生成
 
 [转-Java中的静态代理、JDK动态代理、cglib动态代理](http://wuwenliang.net/2018/11/25/%E8%BD%AC-Java%E4%B8%AD%E7%9A%84%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E3%80%81JDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E3%80%81cglib%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/)
 
+
+[Java动态代理的两种实现方法](https://blog.csdn.net/heyutao007/article/details/49738887)
+
+[Java三种代理模式：静态代理、动态代理和cglib代理](https://segmentfault.com/a/1190000011291179)
+
+[java动态代理实现与原理详细分析](https://www.cnblogs.com/zyy1688/p/10110148.html)
+
 还没看
 
 
 
 
 
-[Java动态代理的两种实现方法](https://blog.csdn.net/heyutao007/article/details/49738887)
 
 [JAVA反射与注解](https://www.daidingkang.cc/2017/07/18/java-reflection-annotations/)

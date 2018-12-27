@@ -1,4 +1,4 @@
-package org.vincent.proxy;
+package org.vincent.proxy.jdkdynamicProxy;
 
 import org.vincent.proxy.dynamicproxy.Person;
 import org.vincent.proxy.dynamicproxy.PersonInvocationHandler;
@@ -111,18 +111,7 @@ public class JdkDynamicProxyTest {
         props.put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
     }
 
-    /**
-     * 设置保存Cglib代理生成的类文件。
-     *
-     * @throws Exception
-     */
-    public static void saveGeneratedCGlibProxyFiles(String dir) throws Exception {
-        Field field = System.class.getDeclaredField("props");
-        field.setAccessible(true);
-        Properties props = (Properties) field.get(null);
-        // System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, dir);//dir为保存文件路径
-        props.put("net.sf.cglib.core.DebuggingClassWriter.traceEnabled", "true");
-    }
+
 
 
 }

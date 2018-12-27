@@ -25,7 +25,7 @@ public class PersonInvocationHandler<T> implements InvocationHandler {
      * @param proxy  代表动态生成的 动态代理 对象实例
      * @param method 代表调用代理类的接口方法，和生成的代理类实例调用的接口方法是一致的，它对应的Method 实例
      * @param args   代表调用接口方法对应的Object参数数组，如果接口是无参，则为null； 对于原始数据类型返回的他的包装类型。
-     * @return
+     * @return 返回接口调用的返回值类型
      * @throws Throwable
      */
     @Override
