@@ -1,4 +1,4 @@
-package org.vincent.proxy;
+package org.vincent.proxy.staticproxy;
 
 import org.vincent.proxy.staticproxy.Cat;
 import org.vincent.proxy.staticproxy.FeederProxy;

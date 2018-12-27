@@ -626,6 +626,9 @@ cglib是针对类来实现代理的，他的原理是对代理的目标类生成
 [java的动态代理机制详解](http://www.cnblogs.com/xiaoluo501395377/p/3383130.html)
 
 [彻底理解JAVA动态代理](https://www.cnblogs.com/flyoung2008/archive/2013/08/11/3251148.html)
+
+[转-Java中的静态代理、JDK动态代理、cglib动态代理](http://wuwenliang.net/2018/11/25/%E8%BD%AC-Java%E4%B8%AD%E7%9A%84%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E3%80%81JDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E3%80%81cglib%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/)
+
 还没看
 
 
