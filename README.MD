@@ -1106,7 +1106,7 @@ public class CustomAspect implements IAspect {
 
 ```
 
-#### Cglib 是基于类实现的动态代理即业务类只需要实现类即可，不用强制必须实现某个接口为了突出这个有点这里没有实现接口
+#### Cglib 是基于类实现的动态代理即业务类只需要实现类即可，不用强制必须实现某个接口为了突出这个优点这里没有实现接口
 ```java
 package org.vincent.aop.cglib;
 
