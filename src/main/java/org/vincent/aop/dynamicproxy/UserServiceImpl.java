@@ -11,8 +11,9 @@ package org.vincent.aop.dynamicproxy;
  * @Created by lenovo on 2018/12/26 <br/>
  */
 public class UserServiceImpl implements IUserService{
+
     @Override
-    public void saveUser(String username, String password) {
+    public void saveUser(String username, String password) throws Exception {
         System.out.println("save user[username=" + username + ",password=" + password + "]");
     }
 }

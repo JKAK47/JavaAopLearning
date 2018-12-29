@@ -43,7 +43,7 @@ public class CglibProxyGenerator {
                 return result;
             }
         });
-        // 3.4 创建代理
+        // 3.4 创建代理对象
         return enhancer.create();
     }
 

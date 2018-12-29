@@ -7,6 +7,9 @@ package org.vincent.proxy.cglibproxy;
 public class MonitorUtil {
     private static ThreadLocal<Long> tl = new ThreadLocal<>();
 
+    /**
+     * 记录进入开始时间
+     */
     public static void start() {
         tl.set(System.currentTimeMillis());
     }

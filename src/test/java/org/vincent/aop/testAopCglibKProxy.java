@@ -3,7 +3,6 @@ package org.vincent.aop;
 import org.junit.Test;
 import org.vincent.aop.cglib.CglibProxyGenerator;
 import org.vincent.aop.cglib.CustomAspect;
-import org.vincent.aop.cglib.IUserService;
 import org.vincent.aop.cglib.UserServiceImpl;
 
 /**
@@ -20,10 +19,10 @@ public class testAopCglibKProxy {
     @Test
     public void testCglibProxy() {
         System.out.println("before Proxy......");
-        IUserService userService = new UserServiceImpl();
+        UserServiceImpl userService = new UserServiceImpl();
         userService.saveUser("zby", "1234567890");
         System.out.println("引入Cglib  Proxy代理库 后......");
-        IUserService proxyUserService = (IUserService) CglibProxyGenerator.generatorCglibProxy(userService, new CustomAspect());
+        UserServiceImpl proxyUserService = (UserServiceImpl) CglibProxyGenerator.generatorCglibProxy(userService, new CustomAspect());
         proxyUserService.saveUser("zby", "1234567890");
     }
 }

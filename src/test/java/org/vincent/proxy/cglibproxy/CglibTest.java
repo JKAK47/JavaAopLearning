@@ -20,11 +20,11 @@ import java.util.Properties;
 public class CglibTest {
     @Test
     public void testCglib() throws Exception {
-
         System.out.println(System.getProperty("user.dir"));
+
         /** 开启 保存cglib生成的动态代理类类文件*/
         saveGeneratedCGlibProxyFiles(System.getProperty("user.dir"));
-        /** 第一种方法: 创建cglib 代理类 start */
+        /** 第一种方法: 手动创建cglib 代理类 start */
         // 创建加强器，用来创建动态代理类
         Enhancer enhancer = new Enhancer();
         // 为代理类指定需要代理的类，也即是父类
@@ -37,13 +37,15 @@ public class CglibTest {
         Dog dog = (Dog) enhancer.create();
         /** 创建cglib 代理类 end */
         System.out.println(dog.call());
+        System.out.println(dog.getClass());
 
         // 对于上面这几步，可以新增一个工具方法 放置在 CglibMethodInterceptor 里面；也就有了第二种方法
         // new 一个新的方法拦截器，该拦截器还顺带一个用于创建代理类的工具方法。看起来简单很多
         cglibMethodInterceptor = new CglibMethodInterceptor();
+
         dog = (Dog) cglibMethodInterceptor.CglibProxyGeneratory(Dog.class);
         System.out.println(dog.call());
-
+        System.out.println(dog.getClass());
     }
 
     /**

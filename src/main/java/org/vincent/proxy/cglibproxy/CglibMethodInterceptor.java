@@ -17,10 +17,9 @@ import java.lang.reflect.Method;
  * @Created by lenovo on 2018/12/26-17:56 <br/>
  */
 public class CglibMethodInterceptor implements MethodInterceptor {
-
     /**
-     * 用于生成cglib 动态代理类工具方法
-     * @param target 代表需要 被代理的 委托类的Class 对象
+     * 用于生成 Cglib 动态代理类工具方法
+     * @param target 代表需要 被代理的 委托类的 Class 对象
      * @return
      */
     public Object CglibProxyGeneratory(Class target) {
@@ -37,7 +36,10 @@ public class CglibMethodInterceptor implements MethodInterceptor {
     }
 
     /**
-     * 功能主要是在调用业务类方法之前 之后添加统计时间的方法逻辑
+     * 功能主要是在调用业务类方法之前 之后添加统计时间的方法逻辑.
+     * intercept 因为  具有 MethodProxy proxy 参数的原因 不再需要代理类的引用对象了。
+     * 当然 也可以通过 method 引用实例 通过   Object result = method.invoke(target, args); 形式反射调用被代理类方法，
+     * target 实例代表被代理类对象引用, 初始化 CglibMethodInterceptor 时候被赋值 。但是Cglib不推荐使用这种方式
      * @param obj    代表生成的动态代理类 对象
      * @param method 代理类中被拦截的接口方法
      * @param args   接口方法参数
@@ -50,6 +52,7 @@ public class CglibMethodInterceptor implements MethodInterceptor {
         System.out.println("before");
         MonitorUtil.start();
         Object result = proxy.invokeSuper(obj, args);
+        //Object result = method.invoke(target, args);
         System.out.println("after");
         MonitorUtil.finish(method.getName());
         return result;

@@ -32,7 +32,7 @@ public class JdkDynamicProxyTest {
         //创建一个实例对象，这个对象是被代理的对象，委托类
         Person person = new SoftwareEngineer("Vincent");
         //创建一个与代理类相关联的InvocationHandler,每一个代理类都有一个关联的 InvocationHandler，并将代理类引用传递进去
-        InvocationHandler Handler = new PersonInvocationHandler<Person>(person);
+        InvocationHandler Handler = new PersonInvocationHandler<>(person);
         //创建一个 代理对象 personProxy 来代理 person，创建的代理对象的每个执行方法都会被替换执行Invocation接口中的invoke方法
         Person personProxy = (Person) Proxy.newProxyInstance(Person.class.getClassLoader(), new Class<?>[]{Person.class}, Handler);
         /** 代理类信息 */
@@ -52,7 +52,7 @@ public class JdkDynamicProxyTest {
          */
         // 1、创建 InvocationHandler 实例并设置代理的目标类对象
         Person persontwo = new SoftwareEngineer("Vincent");
-        InvocationHandler Handlertwo = new PersonInvocationHandler<Person>(persontwo);
+        InvocationHandler Handlertwo = new PersonInvocationHandler<>(persontwo);
         // 2 创建代理类,是一个字节码文件, 把 proxyClass 保存起来就能看到 他继承Proxy 类，实现Person接口
         Class<?> proxyClass = Proxy.getProxyClass(Person.class.getClassLoader(), new Class<?>[]{Person.class});
         /** 代理类信息 */
@@ -64,8 +64,13 @@ public class JdkDynamicProxyTest {
         Constructor<?> ProxyConstructor = proxyClass.getConstructor(InvocationHandler.class);
         // 4、通过构造器创建一个  动态代理类 实例
         Person stuProxy = (Person) ProxyConstructor.newInstance(Handlertwo);
+        /** 检测生成的类是否是代理类 */
+        System.out.println("stuProxy isProxy "+Proxy.isProxyClass(stuProxy.getClass()));
+        /** 获取 代理类关联的 InvocationHandler 是哪个*/
+        InvocationHandler handlerObject = Proxy.getInvocationHandler(stuProxy);
+        System.out.println(handlerObject.getClass().getName());
         stuProxy.goWorking(stuProxy.getName(), "广州");
-
+        // 保存代理類
         saveClass("$PersonProxy0", proxyClass.getInterfaces(), "D:/123/");
     }
 

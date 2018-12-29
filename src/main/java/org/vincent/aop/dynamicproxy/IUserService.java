@@ -11,5 +11,5 @@ package org.vincent.aop.dynamicproxy;
  * @Created by lenovo on 2018/12/26 <br/>
  */
 public interface IUserService {
-    void saveUser(String username, String password);
+    void saveUser(String username, String password) throws Exception;
 }

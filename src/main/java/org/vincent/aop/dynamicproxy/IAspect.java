@@ -13,8 +13,10 @@ package org.vincent.aop.dynamicproxy;
 public interface IAspect {
     /**
      * 在切点接口方法执行之前执行
+     * @param args 切点参数列表
+     * @return
      */
-    void startTransaction();
+    boolean startTransaction(Object... args);
 
     /**
      * 在切点接口方法执行之后执行
