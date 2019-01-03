@@ -20,6 +20,11 @@ public class SoftwareEngineer implements Person{
     }
 
     @Override
+    public String toString() {
+        return "SoftwareEngineer "+getName();
+    }
+
+    @Override
     public void goWorking(String name, String dst) {
         System.out.println("name ="+name+" ， 去 "+dst +" 工作");
     }

@@ -3,11 +3,18 @@
 # Java 代理模式实现方式，主流如下五种方法
 
 - 静态代理，工程师编辑代理类代码，实现代理模式；在编译期就生成了代理类。
-- 基于 JDK 实现动态代理，通过jdk提供的工具方法Proxy.newProxyInstance动态构建全新的代理类(继承Proxy类，并实现InvocationHandler接口 )字节码文件并实例化对象返回。(jdk动态代理是由java内部的反射机制来实现的调用委托类方法)
-- 基于CGlib 动态代理模式 基于继承被代理类生成代理子类，不用实现接口。只需要被代理类是非final 类即可。(cglib动态代理底层是借助asm字节码技术)
-- 基于 Aspectj 实现动态代理（修改目标类的字节，织入代理的字节，在程序编译（编译的时候 插入动态代理的字节码，不会生成全新的Class   ） 
-- 基于 instrumentation 实现动态代理（修改目标类的字节码、类装载的时候动态拦截去修改，基于javaagent） -javaagent:spring-instrument-4.3.8.RELEASE.jar （类装载的时候 插入动态代理的字节码，不会生成全新的Class   ）
-# Notes
+
+- 基于 JDK 实现动态代理，通过jdk提供的工具方法Proxy.newProxyInstance动态构建全新的代理类(继承Proxy类，并持有InvocationHandler接口引用 )字节码文件并实例化对象返回。(jdk动态代理是由java内部的反射机制来实例化代理对象，并代理的调用委托类方法)
+
+- 基于CGlib 动态代理模式 基于继承被代理类生成代理子类，不用实现接口。只需要被代理类是非final 类即可。(cglib动态代理底层是借助asm字节码技术
+
+- 基于 Aspectj 实现动态代理（修改目标类的字节，织入代理的字节，在程序编译的时候 插入动态代理的字节码，不会生成全新的Class   ） 
+
+- 基于 instrumentation 实现动态代理（修改目标类的字节码、类装载的时候动态拦截去修改，基于javaagent） `-javaagent:spring-instrument-4.3.8.RELEASE.jar` （类装载的时候 插入动态代理的字节码，不会生成全新的Class   ）
+
+
+
+## Notes
 - 委托类 即指的是代理模式中的被代理对象
 - 代理类 指的是生成的代表委托类的一个角色
 
@@ -164,12 +171,12 @@ public class staticProxyTest {
 
 ```
 
-静态代理很好的诠释了代理涉及模式，代理模式最主要的就是有一个公共接口（Cat），一个委托类（Lion），一个代理类（FeederProxy）,代理类持有委托类的实例，代为执行具体类实例方法。
+静态代理很好的诠释了代理设计模式，代理模式最主要的就是有一个公共接口（Cat），一个委托类（Lion），一个代理类（FeederProxy）,代理类持有委托类的实例，代为执行具体类实例方法。
 上面说到，代理模式就是在访问实际对象时引入一定程度的间接性，因为这种间接性，可以附加多种用途。这里的间接性就是指客户端不直接调用实际对象的方法，客户端依赖公共接口并使用代理类。
 那么我们在代理过程中就可以加上一些其他用途。 就这个例子来说在 eatFood方法调用中，代理类在调用具体实现类之前添加` System.out.println("proxy Lion exec eatFood ");`语句
 就是添加间接性带来的收益。代理类存在的意义是为了增加一些公共的逻辑代码。
 
-## 动态代理类
+## 动态代理类(基于接口实现)
 静态代理是代理类在代码运行前已经创建好，并生成class文件；动态代理类 是代理类在程序运行时创建的代理模式。 
 
 动态代理类的代理类并不是在Java代码中定义的，而是在运行时根据我们在Java代码中的“指示”动态生成的。相比于静态代理， 动态代理的优势在于可以很方便的对代理类的函数进行统一的处理，而不用修改每个代理类中的方法。
@@ -279,7 +286,7 @@ public class PersonInvocationHandler<T> implements InvocationHandler {
     /**
      * 在
      * @param proxy  代表动态生成的 动态代理 对象实例
-     * @param method 代表调用代理类的接口方法，和生成的代理类实例调用的接口方法是一致的，它对应的Method 实例
+     * @param method 代表被调用委托类的接口方法，和生成的代理类实例调用的接口方法是一致的，它对应的Method 实例
      * @param args   代表调用接口方法对应的Object参数数组，如果接口是无参，则为null； 对于原始数据类型返回的他的包装类型。
      * @return
      * @throws Throwable
@@ -575,7 +582,7 @@ Jdk为我们的生成了一个叫$Proxy0（这个名字后面的0是编号，有
 
 我们可以对 InvocationHandler 看做一个中介类，中介类持有一个被代理对象，被Proxy类回调。在invoke方法中调用了被代理对象的相应方法。通过聚合方式持有被代理对象的引用，把客户端对invoke的调用最终都转为对被代理对象的调用。
 
-客户端代码通过代理类引用调用接口方法时，通过自身持有的中介类对象引用来调用中介类对象的invoke方法，从而达到代理执行被代理对象的方法。也就是说，动态代理Proxy类提供了模板实现，对外提供扩展点，外部通过实现InvocationHandler接口将被代理类纳入JDK代理类Proxy。
+客户端代码通过代理类引用调用接口方法时，通过代理类关联的中介类对象引用来调用中介类对象的invoke方法，从而达到代理执行被代理对象的方法。也就是说，动态代理Proxy类提供了模板实现，对外提供扩展点，外部通过实现InvocationHandler接口将被代理类纳入JDK代理类Proxy。
 
 #### 一个典型的基于JDK动态代理创建对象过程可分为以下四个步骤：
 1、通过实现InvocationHandler接口创建自己的调用处理器 IvocationHandler handler = new InvocationHandlerImpl(...);
@@ -603,32 +610,21 @@ JDK动态代理的代理类字节码在创建时，需要实现业务实现类�
 
 
 
-### 基于CGlib 技术动态代理代理类实现 
+### 基于CGlib 技术动态代理代理类实现 (基于继承)
+
 **Cglib是针对类来实现代理的，他的原理是对代理的目标类生成一个子类，并覆盖其中方法实现增强，因为底层是基于创建被代理类的一个子类，所以它避免了JDK动态代理类的缺陷。**
 
 但因为采用的是继承，所以不能对final修饰的类进行代理。final修饰的类不可继承。
 #### 导入maven 依赖
 **cglib 是基于asm 字节修改技术。导入 cglib 会间接导入 asm, ant, ant-launcher 三个jar 包。**
 ```xml
-  <!-- cglib 动态代理依赖 begin -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.2.5</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>org.ow2.asm</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- 直接引用  -->
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>5.2</version>
-        </dependency>
-        <!-- cglib 动态代理依赖 stop -->
+<!-- cglib 动态代理依赖 begin -->
+  <dependency>
+    <groupId>cglib</groupId>
+    <artifactId>cglib</artifactId>
+    <version>3.2.5</version>
+</dependency>
+<!-- cglib 动态代理依赖 stop -->
 ```
 
 
@@ -658,61 +654,66 @@ public class Dog {
 #### 方法拦截器 实现 MethodInterceptor 接口
 ```java
  package org.vincent.proxy.cglibproxy;
- 
- import net.sf.cglib.proxy.Enhancer;
- import net.sf.cglib.proxy.MethodInterceptor;
- import net.sf.cglib.proxy.MethodProxy;
- 
- import java.lang.reflect.Method;
- 
- /**
-  * @Package: org.vincent.proxy.cglibproxy <br/>
-  * @Description： Cglib 方法拦截器,不用依赖被代理业务类的引用。  <br/>
-  * @author: lenovo <br/>
-  * @Company: PLCC <br/>
-  * @Copyright: Copyright (c) 2019 <br/>
-  * @Version: 1.0 <br/>
-  * @Modified By: <br/>
-  * @Created by lenovo on 2018/12/26-17:56 <br/>
-  */
- public class CglibMethodInterceptor implements MethodInterceptor {
- 
-     /**
-      * 用于生成cglib 动态代理类工具方法
-      * @param target 代表需要 被代理的 委托类的Class 对象
-      * @return
-      */
-     public Object CglibProxyGeneratory(Class target) {
-         /** 创建cglib 代理类 start */
-         // 创建加强器，用来创建动态代理类
-         Enhancer enhancer = new Enhancer();
-         // 为代理类指定需要代理的类，也即是父类
-         enhancer.setSuperclass(target);
-         // 设置方法拦截器回调引用，对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept() 方法进行拦截
-         enhancer.setCallback(this);
-         // 获取动态代理类对象并返回
-         return enhancer.create();
-         /** 创建cglib 代理类 end */
-     }
- 
-     /**
-      * @param obj    代表生成的动态代理类
-      * @param method 代理类中被拦截的接口方法
-      * @param args   接口方法参数
-      * @param proxy  用于调用父类真正的业务类方法。
-      * @return
-      * @throws Throwable
-      */
-     @Override
-     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-         System.out.println("before");
-         MonitorUtil.start();
-         Object result = proxy.invokeSuper(obj, args);
-         System.out.println("after");
-         MonitorUtil.finish(method.getName());
-         return result;
-     }
- }
+
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+
+import java.lang.reflect.Method;
+
+/**
+ * @Package: org.vincent.proxy.cglibproxy <br/>
+ * @Description： Cglib 方法拦截器,不用依赖被代理业务类的引用。  <br/>
+ * @author: lenovo <br/>
+ * @Company: PLCC <br/>
+ * @Copyright: Copyright (c) 2019 <br/>
+ * @Version: 1.0 <br/>
+ * @Modified By: <br/>
+ * @Created by lenovo on 2018/12/26-17:56 <br/>
+ */
+public class CglibMethodInterceptor implements MethodInterceptor {
+    /**
+     * 用于生成 Cglib 动态代理类工具方法
+     * @param target 代表需要 被代理的 委托类的 Class 对象
+     * @return
+     */
+    public Object CglibProxyGeneratory(Class target) {
+        /** 创建cglib 代理类 start */
+        // 创建加强器，用来创建动态代理类
+        Enhancer enhancer = new Enhancer();
+        // 为代理类指定需要代理的类，也即是父类
+        enhancer.setSuperclass(target);
+        // 设置方法拦截器回调引用，对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept() 方法进行拦截
+        enhancer.setCallback(this);
+        // 获取动态代理类对象并返回
+        return enhancer.create();
+        /** 创建cglib 代理类 end */
+    }
+
+    /**
+     * 功能主要是在调用业务类方法之前 之后添加统计时间的方法逻辑.
+     * intercept 因为  具有 MethodProxy proxy 参数的原因 不再需要代理类的引用对象了。
+     * 当然 也可以通过 method 引用实例 通过   Object result = method.invoke(target, args); 形式反射调用被代理类方法，
+     * target 实例代表被代理类对象引用, 初始化 CglibMethodInterceptor 时候被赋值 。但是Cglib不推荐使用这种方式
+     * @param obj    代表生成的动态代理类 对象
+     * @param method 代理类中被拦截的接口方法
+     * @param args   接口方法参数
+     * @param proxy  用于调用父类真正的业务类方法。
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        System.out.println("before");
+        MonitorUtil.start();
+        Object result = proxy.invokeSuper(obj, args);
+        //Object result = method.invoke(target, args);
+        System.out.println("after");
+        MonitorUtil.finish(method.getName());
+        return result;
+    }
+}
+
 
 ```
 #### 一个切面，用于在方法拦截器中intercept 方法中调用真正业务方法之前 之后处理逻辑
@@ -806,6 +807,14 @@ public class CglibTest {
 }
 
 ```
+### Cglib 总结
+
+- CGlib可以传入接口也可以传入普通的类，接口使用实现的方式,普通类使用会使用继承的方式生成代理类.
+- 由于是继承方式,如果是 static方法,private方法,final方法等描述的方法是不能被代理的
+- 做了方法访问优化，使用建立方法索引的方式避免了传统Method的方法反射调用.
+- 提供callback 和filter设计，可以灵活地给不同的方法绑定不同的callback。编码更方便灵活。
+- CGLIB会默认代理Object中finalize,equals,toString,hashCode,clone等方法。比JDK代理多了finalize和clone。
+
 ## 静态代理 基于JDK动态代理 基于Cglib 动态代理
 
 静态代理是通过在代码中显式编码定义一个业务实现类的代理类，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；
@@ -821,7 +830,7 @@ cglib代理无需实现接口，通过生成类字节码实现代理，比反射
 ## AOP 实现案例
    AOP的源码中用到了两种动态代理来实现拦截切入功能：jdk动态代理和cglib动态代理。两种方法同时存在，各有优劣。
  jdk动态代理是由java内部的反射机制来实现的，cglib动态代理底层则是借助asm来实现的。
- 总的来说，反射机制在生成类的过程中比较高效，而asm在生成类之后的相关代理类执行过程中比较高效（可以通过将asm生成的类进行缓存，这样解决asm生成类过程低效问题）。
+ 总的来说，反射机制在生成类的过程中比较高效，执行时候通过反射调用委托类接口方法比较慢；而asm在生成类之后的相关代理类执行过程中比较高效（可以通过将asm生成的类进行缓存，这样解决asm生成类过程低效问题）。
  还有一点必须注意：jdk动态代理的应用前提，必须是委托类基于统一的接口。如果没有上述前提，jdk动态代理不能应用。
  由此可以看出，jdk动态代理有一定的局限性，cglib这种第三方类库实现的动态代理应用更加广泛，且在效率上更有优势。
 
@@ -1247,3 +1256,12 @@ public class testAopCglibKProxy {
 
 
 [JAVA反射与注解](https://www.daidingkang.cc/2017/07/18/java-reflection-annotations/)
+-- 待看
+[Spring AOP 实现原理----AspectJ与CGLIB介绍](https://blog.csdn.net/wenbingoon/article/details/8988553)
+
+[Java之代理（jdk静态代理，jdk动态代理，cglib动态代理，aop，aspectj）](https://blog.csdn.net/centre10/article/details/6847828)
+
+[Java JDK代理、CGLIB、AspectJ代理分析比较](https://blog.csdn.net/a837199685/article/details/68930987)
+
+## 源码
+[github-欢迎star交流](https://github.com/JKAK47/JavaAopLearning)

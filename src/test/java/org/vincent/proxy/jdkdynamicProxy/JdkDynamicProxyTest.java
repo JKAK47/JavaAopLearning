@@ -41,7 +41,8 @@ public class JdkDynamicProxyTest {
                 " superClass = " + personProxy.getClass().getSuperclass() + " methods =" + Arrays.toString(personProxy.getClass().getMethods()));
         // 通过 代理类 执行 委托类的代码逻辑
         personProxy.goWorking(personProxy.getName(), "深圳");
-
+        /** toString方法也会被代理 */
+        System.out.println(personProxy.toString());
         System.out.println("-------------------第二种创建代理类方法--------------");
         /**
          *  动态代理对象步骤
