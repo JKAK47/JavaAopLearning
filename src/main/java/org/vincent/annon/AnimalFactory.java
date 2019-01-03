@@ -1,9 +1,9 @@
-package org.vincent.proxy;
+package org.vincent.annon;
 
 import java.lang.reflect.Proxy;
 
-import org.vincent.annon.SevenAnnoInjectionHandle;
-import org.vincent.service.AOPMethod;
+import org.vincent.annon.service.AOPMethod;
+
 
 /**
  * 根据 传进来的委托实例引用创建并返回代理类引用

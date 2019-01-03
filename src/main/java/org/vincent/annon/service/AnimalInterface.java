@@ -1,4 +1,4 @@
-package org.vincent.service;
+package org.vincent.annon.service;
 
 /**
  * 动态代理的业务接口定义

@@ -2,7 +2,7 @@ package org.vincent.annon.example;
 
 
 import org.vincent.annon.Seven;
-import org.vincent.service.AnimalInterface;
+import org.vincent.annon.service.AnimalInterface;
 
 /**
  * 实现接口的具体业务类

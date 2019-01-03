@@ -1254,6 +1254,7 @@ public class testAopCglibKProxy {
 
 [Java代理(jdk静态代理、动态代理和cglib动态代理)](http://www.cnblogs.com/fillPv/p/5939277.html)
 
+[基于Class字节码透视动态代理本质](https://shimo.im/doc/ONEwKqaiY6cxz1f4)
 
 [JAVA反射与注解](https://www.daidingkang.cc/2017/07/18/java-reflection-annotations/)
 -- 待看
@@ -1265,3 +1266,4 @@ public class testAopCglibKProxy {
 
 ## 源码
 [github-欢迎star交流](https://github.com/JKAK47/JavaAopLearning)
+

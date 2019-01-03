@@ -1,14 +1,24 @@
-package org.vincent.proxy;
+package org.vincent.annon;
+
+
+
+import org.junit.Test;
+import org.vincent.annon.example.DogImp;
+import org.vincent.annon.service.AOPMethod;
+import org.vincent.annon.service.AnimalInterface;
 
 import java.lang.reflect.Method;
 
-import org.vincent.annon.example.DogImp;
-import org.vincent.service.AOPMethod;
-import org.vincent.service.AnimalInterface;
-
-public class AOPTest {
-
-    public static void main(String[] args) {
+/**
+ * @author PengRong
+ * @package org.vincent.annon
+ * @date 2019/1/3 - 21:58
+ * @ProjectName JavaAopLearning
+ * @Description: TODO
+ */
+public class AopTest {
+    @Test
+    public  void  testAop(){
 
         /**
          * new AOPMethod() { // 这里写方法执行前的AOP切入方法
@@ -45,6 +55,7 @@ public class AOPTest {
 
             }
         });// 返回一个代理类
+
         dog.say();// 实体的一个行为
         String name1 = "我的名字是= " + dog.getName();// 通过这个可以看到可以将注解注入到属性中
         System.out.println(name1);
