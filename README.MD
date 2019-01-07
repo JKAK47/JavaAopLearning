@@ -1288,6 +1288,10 @@ AOP 实现的关键就在于 AOP 框架自动创建的 AOP 代理，AOP 代理�
 
 [Java JDK代理、CGLIB、AspectJ代理分析比较](https://blog.csdn.net/a837199685/article/details/68930987)
 
+[cglib源码分析（四）：cglib 动态代理原理分析](https://www.cnblogs.com/cruze/p/3865180.html#lable1)
+
+[Cglib源码分析 invoke和invokeSuper的差别](https://blog.csdn.net/makecontral/article/details/79593732)
+
 ## 源码
 [github-欢迎star交流](https://github.com/JKAK47/JavaAopLearning)
 

@@ -35,6 +35,12 @@ public class JdkDynamicProxyTest {
         InvocationHandler Handler = new PersonInvocationHandler<>(person);
         //创建一个 代理对象 personProxy 来代理 person，创建的代理对象的每个执行方法都会被替换执行Invocation接口中的invoke方法
         Person personProxy = (Person) Proxy.newProxyInstance(Person.class.getClassLoader(), new Class<?>[]{Person.class}, Handler);
+        /**
+         * 这三个方法也会被JDK生成的动态代理代理
+         */
+        personProxy.hashCode();
+        personProxy.toString();
+        personProxy.equals("");
         /** 代理类信息 */
         System.out.println("package = " + personProxy.getClass().getPackage() + " SimpleName = " + personProxy.getClass().getSimpleName() + " name =" + personProxy.getClass().getName() + " CanonicalName = " +
                 "" + personProxy.getClass().getCanonicalName() + " 实现的接口 Interfaces = " + Arrays.toString(personProxy.getClass().getInterfaces()) +
@@ -56,6 +62,7 @@ public class JdkDynamicProxyTest {
         InvocationHandler Handlertwo = new PersonInvocationHandler<>(persontwo);
         // 2 创建代理类,是一个字节码文件, 把 proxyClass 保存起来就能看到 他继承Proxy 类，实现Person接口
         Class<?> proxyClass = Proxy.getProxyClass(Person.class.getClassLoader(), new Class<?>[]{Person.class});
+        proxyClass.getResource("");
         /** 代理类信息 */
         System.out.println("package = " + proxyClass.getPackage() + " SimpleName = " + proxyClass.getSimpleName() + " name =" + proxyClass.getName() + " CanonicalName = " +
                 "" + proxyClass.getCanonicalName() + " 实现的接口 Interfaces = " + Arrays.toString(proxyClass.getInterfaces()) +
@@ -72,7 +79,7 @@ public class JdkDynamicProxyTest {
         System.out.println(handlerObject.getClass().getName());
         stuProxy.goWorking(stuProxy.getName(), "广州");
         // 保存代理類
-        saveClass("$PersonProxy0", proxyClass.getInterfaces(), "D:/123/");
+        saveClass("com.org.vincent.$Proxy8", proxyClass.getInterfaces(), "D:/123/");
     }
 
     /**
@@ -88,6 +95,7 @@ public class JdkDynamicProxyTest {
          * 第二个参数是 代理类需要实现的接口
          */
         byte[] classFile = ProxyGenerator.generateProxyClass(className, interfaces);
+
         /**
          * 如果目录不存在就新建所有子目录
          */

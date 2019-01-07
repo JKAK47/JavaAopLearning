@@ -54,10 +54,11 @@ public class CglibTest {
      * @throws Exception
      */
     public void saveGeneratedCGlibProxyFiles(String dir) throws Exception {
-        Field field = System.class.getDeclaredField("props");
+        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, dir);//dir为保存文件路径
+        /*Field field = System.class.getDeclaredField("props");
         field.setAccessible(true);
         Properties props = (Properties) field.get(null);
-        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, dir);//dir为保存文件路径
-        props.put("net.sf.cglib.core.DebuggingClassWriter.traceEnabled", "true");
+
+        props.put("net.sf.cglib.core.DebuggingClassWriter.traceEnabled", "true");*/
     }
 }
