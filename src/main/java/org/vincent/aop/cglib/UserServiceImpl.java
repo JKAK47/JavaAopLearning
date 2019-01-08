@@ -12,6 +12,6 @@ package org.vincent.aop.cglib;
  */
 public class UserServiceImpl {
     public void saveUser(String username, String password) {
-        System.out.println("cglib save user[username=" + username + ",password=" + password + "]");
+        System.out.println("Cglib  委托类 save user[username=" + username + ",password=" + password + "]");
     }
 }

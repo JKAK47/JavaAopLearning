@@ -38,7 +38,7 @@ public class JdkMutiInterfacesTest {
             //创建一个与代理类相关联的InvocationHandler,每一个代理类都有一个关联的 InvocationHandler，并将代理类引用传递进去
             InvocationHandler Handler = new PersonInvocationHandler<>(person);
             //创建一个 代理对象 personProxy 来代理 person，创建的代理对象的每个执行方法都会被替换执行Invocation接口中的invoke方法，多接口代理测试，SoftwareEngineer 实现多个接口
-            Person personProxy = (Person) Proxy.newProxyInstance(Person.class.getClassLoader(), SoftwareEngineer.class.getInterfaces(), Handler);
+            Person personProxy = (Person) Proxy.newProxyInstance(person.getClass().getClassLoader(), person.getClass().getInterfaces(), Handler);
             System.out.println(personProxy.getName());
             personProxy.setName("aaaaaaaBB");
             personProxy.goWorking("大A", "shenzhen");

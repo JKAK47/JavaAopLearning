@@ -17,7 +17,7 @@ import java.util.Properties;
  * @Modified By: <br/>
  * @Created by lenovo on 2018/12/26-18:05 <br/>
  */
-public class CglibTest {
+public class CglibProxyTest {
     @Test
     public void testCglib() throws Exception {
         System.out.println(System.getProperty("user.dir"));

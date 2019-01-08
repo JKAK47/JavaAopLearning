@@ -18,15 +18,15 @@ import java.lang.reflect.Method;
  */
 public class CglibProxyGenerator {
     /**
-     * @param target 需要被代理的委托类对象，Cglib需要继承该类生成子类
+     * @param targetClass 需要被代理的委托类对象的Class实例，Cglib需要继承该类生成子类
      * @param aspect 切面对象,改对象方法将在切点方法之前或之后执行
      * @return
      */
-    public static  Object generatorCglibProxy(final Object target, final IAspect aspect){
+    public static  Object generatorCglibProxy(final Class targetClass, final IAspect aspect){
         //3.1 new Enhancer
         Enhancer enhancer = new Enhancer();
         //3.2 设置需要代理的父类
-        enhancer.setSuperclass(target.getClass());
+        enhancer.setSuperclass(targetClass);
         //3.3 设置回调
         enhancer.setCallback(new MethodInterceptor() {
 

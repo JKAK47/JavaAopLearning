@@ -44,19 +44,7 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>3.2.5</version>
-           <!-- <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>org.ow2.asm</groupId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
-        <!-- 直接引用  -->
-       <!-- <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>5.2</version>
-        </dependency>-->
         <!-- cglib 动态代理依赖 stop -->
 
         <!-- AspectJ begin-->

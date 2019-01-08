@@ -608,7 +608,271 @@ JDK动态代理的代理类字节码在创建时，需要实现业务实现类�
 
 **动态代理只能对接口产生代理，不能对类产生代理**
 
-#### JDK动态代理类可以代理多个接口
+#### JDK动态代理类可以生成实现多个接口的代理类
+##### Jdk动态代理委托类多接口定义
+第一个接口
+```java
+package org.vincent.proxy.dynamicproxy;
+
+/**
+ * Created by PengRong on 2018/12/25.
+ * 创建Person 接口 用于定义 委托类和代理类之间的约束行为
+ */
+public interface Person
+{
+    /**
+     *
+     * @param name 人名
+     * @param dst 工作目的地
+     */
+    void goWorking(String name, String dst);
+
+
+    /**
+     * 获取名称
+     * @return
+     */
+    String getName( );
+
+    /**
+     * 设置名称
+     * @param name
+     */
+    void  setName(String name);
+}
+```
+第二个接口
+```java
+
+package org.vincent.proxy.dynamicproxy;
+
+/**
+ * @author PengRong
+ * @package org.vincent.proxy.dynamicproxy
+ * @date 2019/1/8 - 8:07
+ * @ProjectName JavaAopLearning
+ * @Description: 动态代理类实现多个接口 第二个接口定义
+ */
+public interface Company {
+    public  String setCompanyName(String companyName);
+}
+
+```
+##### 委托类实现多个接口
+```java
+package org.vincent.proxy.dynamicproxy;
+
+/**
+ * Created by PengRong on 2018/12/25.
+ * 动态代理委托类实现， 实现接口 Person,Company 实现多个接口。 被动态生成的代理类代理
+ */
+public class SoftwareEngineer implements Person, Company{
+    public  SoftwareEngineer(){}
+    public  SoftwareEngineer(String name){
+        this.name=name;
+    }
+    private  String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "SoftwareEngineer "+getName();
+    }
+
+    @Override
+    public void goWorking(String name, String dst) {
+        System.out.println("name ="+name+" ， 去 "+dst +" 工作");
+    }
+
+    @Override
+    public String setCompanyName(String companyName) {
+        return "companyName: "+ companyName;
+    }
+}
+
+```
+##### 切面类 MonitorUtil ，PersonInvocationHandler 代理类调用处理器 都没变 还是上面JDK案例里面对应的类
+##### 测试类
+```java
+package org.vincent.proxy.jdkdynamicProxy;
+
+import org.vincent.proxy.dynamicproxy.Company;
+import org.vincent.proxy.dynamicproxy.Person;
+import org.vincent.proxy.dynamicproxy.PersonInvocationHandler;
+import org.vincent.proxy.dynamicproxy.SoftwareEngineer;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.Properties;
+
+/**
+ * @author PengRong
+ * @package org.vincent.proxy.jdkdynamicProxy
+ * @date 2019/1/8 - 8:17
+ * @ProjectName JavaAopLearning
+ * @Description: JDK多 委托类多接口测试
+ */
+public class JdkMutiInterfacesTest {
+    /**
+     * 设置保存Java动态代理生成的类文件。
+     *
+     * @throws Exception
+     */
+    public static void saveGeneratedJdkProxyFiles() throws Exception {
+        Field field = System.class.getDeclaredField("props");
+        field.setAccessible(true);
+        Properties props = (Properties) field.get(null);
+        props.put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
+    }
+    public static  void  main(String[] args) throws Exception {
+        {
+            saveGeneratedJdkProxyFiles();
+
+            //创建一个实例对象，这个对象是被代理的对象，委托类
+            SoftwareEngineer person = new SoftwareEngineer("Vincent");
+            //创建一个与代理类相关联的InvocationHandler,每一个代理类都有一个关联的 InvocationHandler，并将代理类引用传递进去
+            InvocationHandler Handler = new PersonInvocationHandler<>(person);
+            //创建一个 代理对象 personProxy 来代理 person，创建的代理对象的每个执行方法都会被替换执行Invocation接口中的invoke方法，多接口代理测试，SoftwareEngineer 实现多个接口
+            Person personProxy = (Person) Proxy.newProxyInstance(person.getClass().getClassLoader(), person.getClass().getInterfaces(), Handler);
+            System.out.println(personProxy.getName());
+            personProxy.setName("aaaaaaaBB");
+            personProxy.goWorking("大A", "shenzhen");
+            /** 生成的动态代理类实现两个接口 ，可以强制到另外一个接口*/
+            Company company = (Company) personProxy;
+            company.setCompanyName("CCCCCCCCC");
+        }
+    }
+
+}
+
+```
+
+##### 测试类保存由JDK生成的动态代理类 实现 Person, Company 接口， 继承 Proxy 类
+上面测试类 在生成 代理类类时候直接 将代理类在两个接口引用之间强转也是没问题的。
+```java
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
+package com.sun.proxy;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
+import org.vincent.proxy.dynamicproxy.Company;
+import org.vincent.proxy.dynamicproxy.Person;
+
+public final class $Proxy0 extends Proxy implements Person, Company {
+    private static Method m1;
+    private static Method m4;
+    private static Method m3;
+    private static Method m2;
+    private static Method m6;
+    private static Method m5;
+    private static Method m0;
+
+    public $Proxy0(InvocationHandler var1) throws  {
+        super(var1);
+    }
+
+    public final boolean equals(Object var1) throws  {
+        try {
+            return (Boolean)super.h.invoke(this, m1, new Object[]{var1});
+        } catch (RuntimeException | Error var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public final void setName(String var1) throws  {
+        try {
+            super.h.invoke(this, m4, new Object[]{var1});
+        } catch (RuntimeException | Error var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public final String getName() throws  {
+        try {
+            return (String)super.h.invoke(this, m3, (Object[])null);
+        } catch (RuntimeException | Error var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final String toString() throws  {
+        try {
+            return (String)super.h.invoke(this, m2, (Object[])null);
+        } catch (RuntimeException | Error var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    public final String setCompanyName(String var1) throws  {
+        try {
+            return (String)super.h.invoke(this, m6, new Object[]{var1});
+        } catch (RuntimeException | Error var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
+    }
+
+    public final void goWorking(String var1, String var2) throws  {
+        try {
+            super.h.invoke(this, m5, new Object[]{var1, var2});
+        } catch (RuntimeException | Error var4) {
+            throw var4;
+        } catch (Throwable var5) {
+            throw new UndeclaredThrowableException(var5);
+        }
+    }
+
+    public final int hashCode() throws  {
+        try {
+            return (Integer)super.h.invoke(this, m0, (Object[])null);
+        } catch (RuntimeException | Error var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
+    }
+
+    static {
+        try {
+            m1 = Class.forName("java.lang.Object").getMethod("equals", Class.forName("java.lang.Object"));
+            m4 = Class.forName("org.vincent.proxy.dynamicproxy.Person").getMethod("setName", Class.forName("java.lang.String"));
+            m3 = Class.forName("org.vincent.proxy.dynamicproxy.Person").getMethod("getName");
+            m2 = Class.forName("java.lang.Object").getMethod("toString");
+            m6 = Class.forName("org.vincent.proxy.dynamicproxy.Company").getMethod("setCompanyName", Class.forName("java.lang.String"));
+            m5 = Class.forName("org.vincent.proxy.dynamicproxy.Person").getMethod("goWorking", Class.forName("java.lang.String"), Class.forName("java.lang.String"));
+            m0 = Class.forName("java.lang.Object").getMethod("hashCode");
+        } catch (NoSuchMethodException var2) {
+            throw new NoSuchMethodError(var2.getMessage());
+        } catch (ClassNotFoundException var3) {
+            throw new NoClassDefFoundError(var3.getMessage());
+        }
+    }
+}
+
+```
 
 ### 基于CGlib 技术动态代理代理类实现 (基于继承)
 
@@ -827,14 +1091,20 @@ CGlib动态代理是通过继承业务类，生成的动态代理类是业务类
 静态代理在编译时产生class字节码文件，可以直接使用，效率高。动态代理必须实现InvocationHandler接口，通过invoke调用被委托类接口方法是通过反射方式，比较消耗系统性能，但可以减少代理类的数量，使用更灵活。
 cglib代理无需实现接口，通过生成类字节码实现代理，比反射稍快，不存在性能问题，但cglib会继承目标对象，需要重写方法，所以目标对象不能为final类。
 
-## AOP 实现案例
-   AOP的源码中用到了两种动态代理来实现拦截切入功能：jdk动态代理和cglib动态代理。两种方法同时存在，各有优劣。
- jdk动态代理是由java内部的反射机制来实现的，cglib动态代理底层则是借助asm来实现的。
- 总的来说，反射机制在生成类的过程中比较高效，执行时候通过反射调用委托类接口方法比较慢；而asm在生成类之后的相关代理类执行过程中比较高效（可以通过将asm生成的类进行缓存，这样解决asm生成类过程低效问题）。
- 还有一点必须注意：jdk动态代理的应用前提，必须是委托类基于统一的接口。如果没有上述前提，jdk动态代理不能应用。
- 由此可以看出，jdk动态代理有一定的局限性，cglib这种第三方类库实现的动态代理应用更加广泛，且在效率上更有优势。
+## AOP(面向切面编程) 实现案例
+面向切面编程是继面向对象后，又一种重要的思维方式。面向对象比较重要的是通过继承类实现接口达到代码重用。
+面向切面编程，则注重将不同的功能点分开，实现功能点最大程度的解耦，比如我们现在有业务逻辑层和埋点逻辑，如果不分开，那么在每个业务逻辑方法中除了要实现业务外还要加上埋点逻辑代码，
+如果某一天我不需要埋点逻辑了，那改动的工作量是可想而知的。有没有一种方法让我们只写一次埋点逻辑代码，而把他应用在需要写埋点逻辑的方法前面，当不需要的时候直接删除呢？面向切面编程给我们提供了办法。
 
-**实现AOP关键特点是定义好两个角色 切点 和 切面 。**  代理模式中被代理类 委托类处于切点角色，需要添加的其他比如 校验逻辑，事务，审计逻辑 属于非功能实现逻辑通过 切面类定义的方法插入进去。
+AOP的源码中用到了两种动态代理来实现拦截切入功能：jdk动态代理和cglib动态代理。两种方法同时存在，各有优劣。jdk动态代理是由java内部的反射机制来实现的，Cglib动态代理底层则是借助asm来实现的。
+JDK动态代理的反射机制在生成类的过程中比较高效，执行时候通过反射调用委托类接口方法比较慢；而asm在生成类之后的相关代理类执行过程中比较高效（可以通过将asm生成的类进行缓存，这样解决asm生成类过程低效问题）。
+还有一点必须注意：jdk动态代理的应用前提，必须是委托类基于统一的接口。如果没有上述前提，jdk动态代理不能应用。由此可以看出，jdk动态代理有一定的局限性，cglib这种第三方类库实现的动态代理应用更加广泛，且在执行效率上更有优势。
+
+**实现AOP关键特点是定义好两个角色 切点 和 切面 。**  代理模式中被代理类 委托类处于切点角色，需要添加其他比如 校验逻辑，事务，审计逻辑 属于非功能实现逻辑通过 切面类定义的方法插入进去。
+
+- 切点 是现有的业务逻辑实现
+- 切面 一般是类似于埋点代码 属于公共非功能代码逻辑。可以定义多个切面组成拦截器链
+
 ### JDK动态代理 aop 实现方式
 #### 定义切面接口，完成将通用公共方法注入到被代理类接口调用处理中
 

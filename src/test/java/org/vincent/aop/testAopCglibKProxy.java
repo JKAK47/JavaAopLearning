@@ -22,7 +22,7 @@ public class testAopCglibKProxy {
         UserServiceImpl userService = new UserServiceImpl();
         userService.saveUser("zby", "1234567890");
         System.out.println("引入Cglib  Proxy代理库 后......");
-        UserServiceImpl proxyUserService = (UserServiceImpl) CglibProxyGenerator.generatorCglibProxy(userService, new CustomAspect());
+        UserServiceImpl proxyUserService = (UserServiceImpl) CglibProxyGenerator.generatorCglibProxy(userService.getClass(), new CustomAspect());
         proxyUserService.saveUser("zby", "1234567890");
     }
 }

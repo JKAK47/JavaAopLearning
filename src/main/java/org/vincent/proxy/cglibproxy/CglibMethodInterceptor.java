@@ -26,7 +26,7 @@ public class CglibMethodInterceptor implements MethodInterceptor {
         /** 创建cglib 代理类 start */
         // 创建加强器，用来创建动态代理类
         Enhancer enhancer = new Enhancer();
-        // 为代理类指定需要代理的类，也即是父类
+        // 为代理类指定需要代理的类，也即是父类的Class 对象
         enhancer.setSuperclass(target);
         // 设置方法拦截器回调引用，对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept() 方法进行拦截
         enhancer.setCallback(this);
