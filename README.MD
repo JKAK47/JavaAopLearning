@@ -1777,7 +1777,7 @@ AOP 实现的关键就在于 AOP 框架自动创建的 AOP 代理，AOP 代理�
 <!-- AspectJ stop-->
 
 ```
- 
+[springaop-learn](https://github.com/heyhujiao/springaop-learn)  重点学习基于Aspect 实现Aop 的内容
 ## 动态代理 使用场景
 - 日志集中打印
 - 事务
