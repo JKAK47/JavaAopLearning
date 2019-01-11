@@ -20,7 +20,7 @@ public class CglibProxyGenerator {
     /**
      * @param targetClass 需要被代理的委托类对象的Class实例，Cglib需要继承该类生成子类
      * @param aspect 切面对象,改对象方法将在切点方法之前或之后执行
-     * @return
+     * @return  返回targetClass 的代理对象
      */
     public static  Object generatorCglibProxy(final Class targetClass, final IAspect aspect){
         //3.1 new Enhancer

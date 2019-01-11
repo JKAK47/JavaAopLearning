@@ -955,6 +955,7 @@ public class CglibMethodInterceptor implements MethodInterceptor {
     }
 
     /**
+     *  切点方法 intercept
      * 功能主要是在调用业务类方法之前 之后添加统计时间的方法逻辑.
      * intercept 因为  具有 MethodProxy proxy 参数的原因 不再需要代理类的引用对象了。
      * 当然 也可以通过 method 引用实例 通过   Object result = method.invoke(target, args); 形式反射调用被代理类方法，
@@ -1075,37 +1076,39 @@ public class CglibTest {
 
 - CGlib可以传入接口也可以传入普通的类，接口使用实现的方式,普通类使用会使用继承的方式生成代理类.
 - 由于是继承方式,如果是 static方法,private方法,final方法等描述的方法是不能被代理的
-- 做了方法访问优化，使用建立方法索引的方式避免了传统Method的方法反射调用.
+- 做了方法访问优化，对生成的代理类方法建立方法索引的方式避免了传统Method 反射调用的开销.
 - 提供callback 和filter设计，可以灵活地给不同的方法绑定不同的callback。编码更方便灵活。
-- CGLIB会默认代理Object中finalize,equals,toString,hashCode,clone等方法。比JDK代理多了finalize和clone。
+- CGLIB会默认代理Object中 equals,toString,hashCode,clone等方法。比JDK代理多了clone。
 
 ## 静态代理 基于JDK动态代理 基于Cglib 动态代理
 
 静态代理是通过在代码中显式编码定义一个业务实现类的代理类，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；
 
-JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；
+JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法实现功能增强；
 
-CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；
+CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写委托类业务方法进行功能增强。
 
 
-静态代理在编译时产生class字节码文件，可以直接使用，效率高。动态代理必须实现InvocationHandler接口，通过invoke调用被委托类接口方法是通过反射方式，比较消耗系统性能，但可以减少代理类的数量，使用更灵活。
+静态代理在编译时产生class字节码文件，可以直接使用，效率高。动态代理必须实现InvocationHandler接口，在invoke方法里面通过反射方式调用被委托类接口方法，比较消耗系统性能，但可以减少代理类的数量，使用更灵活。
 cglib代理无需实现接口，通过生成类字节码实现代理，比反射稍快，不存在性能问题，但cglib会继承目标对象，需要重写方法，所以目标对象不能为final类。
 
 ## AOP(面向切面编程) 实现案例
-面向切面编程是继面向对象后，又一种重要的思维方式。面向对象比较重要的是通过继承类实现接口达到代码重用。
+面向切面编程是继面向对象后，又一种重要的思维方式。面向对象比较重要的是通过继承达到代码重用。
 面向切面编程，则注重将不同的功能点分开，实现功能点最大程度的解耦，比如我们现在有业务逻辑层和埋点逻辑，如果不分开，那么在每个业务逻辑方法中除了要实现业务外还要加上埋点逻辑代码，
 如果某一天我不需要埋点逻辑了，那改动的工作量是可想而知的。有没有一种方法让我们只写一次埋点逻辑代码，而把他应用在需要写埋点逻辑的方法前面，当不需要的时候直接删除呢？面向切面编程给我们提供了办法。
 
-AOP的源码中用到了两种动态代理来实现拦截切入功能：jdk动态代理和cglib动态代理。两种方法同时存在，各有优劣。jdk动态代理是由java内部的反射机制来实现的，Cglib动态代理底层则是借助asm来实现的。
+Spring AOP的源码中用到了两种动态代理来实现拦截切入功能：jdk动态代理和cglib动态代理。两种方法同时存在，各有优劣。jdk动态代理是由java内部的反射机制来实现的，Cglib动态代理底层则是借助asm来实现的。
 JDK动态代理的反射机制在生成类的过程中比较高效，执行时候通过反射调用委托类接口方法比较慢；而asm在生成类之后的相关代理类执行过程中比较高效（可以通过将asm生成的类进行缓存，这样解决asm生成类过程低效问题）。
 还有一点必须注意：jdk动态代理的应用前提，必须是委托类基于统一的接口。如果没有上述前提，jdk动态代理不能应用。由此可以看出，jdk动态代理有一定的局限性，cglib这种第三方类库实现的动态代理应用更加广泛，且在执行效率上更有优势。
 
-**实现AOP关键特点是定义好两个角色 切点 和 切面 。**  代理模式中被代理类 委托类处于切点角色，需要添加其他比如 校验逻辑，事务，审计逻辑 属于非功能实现逻辑通过 切面类定义的方法插入进去。
+**实现AOP关键特点是定义好两个角色 切点 和 切面 。**  代理模式中被代理类 委托类处于切点角色(方法 实现功能切入点)，其类方法或者接口需要添加其他比如 校验逻辑，事务，审计逻辑 属于非功能实现逻辑通过 切面类定义的方法插入进去。
 
-- 切点 是现有的业务逻辑实现
-- 切面 一般是类似于埋点代码 属于公共非功能代码逻辑。可以定义多个切面组成拦截器链
+- 切点(pointcut) 是现有的业务逻辑实现类。接口方法是功能增强切入点 (在之前 或 之后 增强)。
+    - 切点接口方法之前或之后的功能增强切入点叫 连接点(jointpoint)。 
+- 切面(aspect) 一般是类似于埋点代码 属于公共非功能代码逻辑。可以定义多个切面组成拦截器链
+    - 切面里面定义的每个方法叫通知(advice) , 实现切面功能，增强切点功能；每个通知(advice)关联一个 切入点表达式关联,切入点表达式定义了在哪个连接点上执行这个通知，切入点表达式如何和连接点匹配时AOP的核心：Spring缺省使用 AspectJ 切入点语法。    
 
-### JDK动态代理 aop 实现方式
+### JDK动态代理 AOP 实现方式
 #### 定义切面接口，完成将通用公共方法注入到被代理类接口调用处理中
 
 ```java
@@ -1493,6 +1496,263 @@ public class testAopCglibKProxy {
 }
 
 ```
+
+### 基于Cglib 实现Aop 拦截器链
+#### 拦截器切面链基接口
+```java
+package org.vincent.aop.interceptor;
+
+import org.vincent.aop.interceptor.exception.InterceptorException;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.interceptor
+ * @date 2019/1/10 - 22:17
+ * @ProjectName JavaAopLearning
+ * @Description: 定义切面链 抽象接口，作为一个拦截器栈的基础接口
+ */
+public interface Interceptor {
+    /**
+     * 拦截器 之前实现用于代码逻辑
+     * @param args 委托类参数
+     */
+    public void beforeIntercept(Object... args) throws InterceptorException;
+
+    /**
+     * 拦截器 之后 实现对计算结果实现公共逻辑
+     * @param result
+     */
+    public void afterIntercept(Object  result)throws InterceptorException;
+}
+
+```
+#### 定义三个 拦截器 实例
+```java
+package org.vincent.aop.interceptor;
+
+import org.vincent.aop.interceptor.exception.InterceptorException;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.interceptor
+ * @date 2019/1/10 - 22:28
+ * @ProjectName JavaAopLearning
+ * @Description: FirstInterceptor 第一个切面类
+ */
+public class FirstInterceptor implements Interceptor {
+
+
+    @Override
+    public void beforeIntercept(Object... args) throws InterceptorException {
+        System.out.println("ClassName: "+this.getClass().getSimpleName()+" methodName ="+new Exception().getStackTrace()[0].getMethodName());
+    }
+
+    @Override
+    public void afterIntercept(Object result) throws InterceptorException {
+        System.out.println("ClassName: "+this.getClass().getSimpleName()+" methodName ="+new Exception().getStackTrace()[0].getMethodName());
+    }
+}
+
+```
+
+---
+
+```java
+package org.vincent.aop.interceptor;
+
+import org.vincent.aop.interceptor.exception.InterceptorException;
+
+import java.util.Arrays;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.interceptor
+ * @date 2019/1/10 - 22:28
+ * @ProjectName JavaAopLearning
+ * @Description: SecInterceptor 第二个 切面类
+ */
+public class SecInterceptor implements Interceptor {
+
+
+    @Override
+    public void beforeIntercept(Object... args) throws InterceptorException {
+        System.out.println("ClassName: "+this.getClass().getSimpleName()+" methodName ="+new Exception().getStackTrace()[0].getMethodName()+" "+ Arrays.toString(args));
+    }
+
+    @Override
+    public void afterIntercept(Object result) throws InterceptorException {
+        System.out.println("ClassName: "+this.getClass().getSimpleName()+" methodName ="+new Exception().getStackTrace()[0].getMethodName());
+    }
+}
+
+```
+
+---
+
+```java
+package org.vincent.aop.interceptor;
+
+import org.vincent.aop.interceptor.exception.InterceptorException;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.interceptor
+ * @date 2019/1/10 - 22:29
+ * @ProjectName JavaAopLearning
+ * @Description: ThirInterceptor 第三个 切面类
+ */
+public class ThirInterceptor implements Interceptor {
+
+
+    @Override
+    public void beforeIntercept(Object... args) throws InterceptorException {
+        System.out.println("ClassName: "+this.getClass().getSimpleName()+" methodName ="+new Exception().getStackTrace()[0].getMethodName());
+    }
+
+    @Override
+    public void afterIntercept(Object result) throws InterceptorException {
+        System.out.println("ClassName: "+this.getClass().getSimpleName()+" methodName ="+new Exception().getStackTrace()[0].getMethodName());
+    }
+}
+
+```
+#### Exception 定义
+```java
+package org.vincent.aop.interceptor.exception;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.interceptor.exception
+ * @date 2019/1/10 - 22:50
+ * @ProjectName JavaAopLearning
+ * @Description: InterceptorException 异常类
+ */
+public class InterceptorException extends   Exception{
+    public InterceptorException(){
+        this("msg...",null);
+
+    }
+    public InterceptorException(String msg){
+        this(msg,null);
+    }
+    public InterceptorException(String msg,Throwable e){
+        super(msg,e);
+    }
+}
+
+```
+#### 基于Cglib 实现切点通知逻辑
+```java
+package org.vincent.aop.interceptor;
+
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import org.vincent.aop.interceptor.exception.InterceptorException;
+
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.interceptor
+ * @date 2019/1/10 - 22:59
+ * @ProjectName JavaAopLearning
+ * @Description: 基于Cglib 实现动态代理类，并实现在业务方法之前 之后插入 切面 通知逻辑
+ */
+public class InterceptorStackProxyGenerator {
+    /**
+     * @param targetClass  需要被代理的委托类对象的Class实例，Cglib需要继承该类生成子类
+     * @param interceptors 切面对象列表栈 ，每个元素都是一个切面, 该对象方法将在切点方法之前或之后执行
+     * @return 返回 targetClass 创建的代理类
+     */
+    public static Object generatorCglibProxy(final Class targetClass, final List<Interceptor> interceptors) {
+        //3.1 new Enhancer
+        Enhancer enhancer = new Enhancer();
+        //3.2 设置需要代理的父类
+        enhancer.setSuperclass(targetClass);
+        //3.3 设置回调
+        enhancer.setCallback((MethodInterceptor) (proxy, method, args, methodProxy) -> {
+            if (Objects.isNull(interceptors)){
+                throw  new  InterceptorException("interceptors is not null");
+            }
+            // 执行切面方法
+            interceptors.forEach((Interceptor item) -> {
+                try {
+                    item.beforeIntercept(args);
+                } catch (InterceptorException e) {
+                    e.printStackTrace();
+                }
+            });
+            // 具体逻辑代码执行,返回值为方法执行结果
+            Object result = methodProxy.invokeSuper(proxy, args);
+            // 执行切面方法
+            interceptors.forEach((Interceptor item) -> {
+                try {
+                    item.afterIntercept(result);
+                } catch (InterceptorException e) {
+                    e.printStackTrace();
+                }
+            });
+            // 返回方法执行结果
+            return result;
+        });
+        // 3.4 创建代理对象
+        return enhancer.create();
+    }
+}
+
+```
+
+####  基于Cglib 拦截器链 测试
+```java
+package org.vincent.aop.intercepter;
+
+import org.junit.Test;
+import org.vincent.aop.interceptor.AccountServiceImpl;
+import org.vincent.aop.interceptor.FirstInterceptor;
+import org.vincent.aop.interceptor.Interceptor;
+import org.vincent.aop.interceptor.InterceptorStackProxyGenerator;
+import org.vincent.aop.interceptor.SecInterceptor;
+import org.vincent.aop.interceptor.ThirInterceptor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author PengRong
+ * @package org.vincent.aop.intercepter
+ * @date 2019/1/10 - 22:30
+ * @ProjectName JavaAopLearning
+ * @Description: 拦截器栈测试
+ */
+public class IntercepterTest {
+    @Test
+    public void intercepterTest() {
+        /**
+         * 构建拦截器栈, 每个切面add 到List的属性影响 拦截器 栈执行先后顺序
+         */
+        Interceptor interceptor1 = new FirstInterceptor();
+        Interceptor interceptor2 = new SecInterceptor();
+        Interceptor interceptor3 = new ThirInterceptor();
+        List<Interceptor> interceptors = new ArrayList<>();
+        interceptors.add(interceptor3);
+        interceptors.add(interceptor1);
+        interceptors.add(interceptor2);
+
+        /**
+         * 代理类构造工具方法
+         */
+        AccountServiceImpl generator = (AccountServiceImpl) InterceptorStackProxyGenerator.generatorCglibProxy(AccountServiceImpl.class, interceptors);
+        /**
+         * 调用业务方法
+         */
+        System.out.println(generator.login("asfdas", "12121212"));
+
+    }
+}
+
+```
+
 ### AspectJ  实现 AOP 效果
 
 AOP 实现的关键就在于 AOP 框架自动创建的 AOP 代理，AOP 代理则可分为静态代理和动态代理两大类:
@@ -1551,7 +1811,9 @@ AOP 实现的关键就在于 AOP 框架自动创建的 AOP 代理，AOP 代理�
 [基于Class字节码透视动态代理本质](https://shimo.im/doc/ONEwKqaiY6cxz1f4)
 
 [JAVA反射与注解](https://www.daidingkang.cc/2017/07/18/java-reflection-annotations/)
+
 -- 待看
+
 [Spring AOP 实现原理----AspectJ与CGLIB介绍](https://blog.csdn.net/wenbingoon/article/details/8988553)
 
 [Java之代理（jdk静态代理，jdk动态代理，cglib动态代理，aop，aspectj）](https://blog.csdn.net/centre10/article/details/6847828)
