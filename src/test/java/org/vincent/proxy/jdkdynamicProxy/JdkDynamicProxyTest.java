@@ -1,6 +1,5 @@
 package org.vincent.proxy.jdkdynamicProxy;
 
-import org.junit.Test;
 import org.vincent.proxy.dynamicproxy.Person;
 import org.vincent.proxy.dynamicproxy.PersonInvocationHandler;
 import org.vincent.proxy.dynamicproxy.SoftwareEngineer;
@@ -80,7 +79,7 @@ public class JdkDynamicProxyTest {
         System.out.println(handlerObject.getClass().getName());
         stuProxy.goWorking(stuProxy.getName(), "广州");
         // 保存代理類
-        //saveClass("com.org.vincent.$Proxy8", proxyClass.getInterfaces(), "D:/123/");
+        saveClass("com.org.vincent.$Proxy8", proxyClass.getInterfaces(), "D:/123/");
     }
 
     /**

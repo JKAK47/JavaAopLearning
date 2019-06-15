@@ -29,7 +29,8 @@ public class JdkMutiInterfacesTest {
         Properties props = (Properties) field.get(null);
         props.put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
     }
-    public static  void  main(String[] args) throws Exception {
+
+    public static void main(String[] args) throws Exception {
         {
             saveGeneratedJdkProxyFiles();
 
@@ -45,6 +46,8 @@ public class JdkMutiInterfacesTest {
             /** 生成的动态代理类实现两个接口 ，可以强制到另外一个接口*/
             Company company = (Company) personProxy;
             company.setCompanyName("CCCCCCCCC");
+            /** 将生产的代理类 写入文件 . */
+            JdkDynamicProxyTest.saveClass("Xx.class", personProxy.getClass().getInterfaces(), "D:/123/");
         }
     }
 
