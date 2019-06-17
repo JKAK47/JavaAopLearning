@@ -28,9 +28,9 @@ public class IntercepterTest {
         Interceptor interceptor2 = new SecInterceptor();
         Interceptor interceptor3 = new ThirInterceptor();
         List<Interceptor> interceptors = new ArrayList<>();
-        interceptors.add(interceptor3);
         interceptors.add(interceptor1);
         interceptors.add(interceptor2);
+        interceptors.add(interceptor3);
 
         /**
          * 代理类构造工具方法

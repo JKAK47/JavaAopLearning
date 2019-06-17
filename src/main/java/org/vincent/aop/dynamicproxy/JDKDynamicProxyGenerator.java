@@ -17,21 +17,21 @@ import java.util.Arrays;
  */
 public class JDKDynamicProxyGenerator {
     /**
-     * @param targetPoint 需要被代理的委托类对象
+     * @param TargetJoinPoint 需要被代理的委托类对象
      * @param aspect 切面对象,该对象方法将在切点方法之前或之后执行
      * @return
      */
-    public static Object generatorJDKProxy(IUserService targetPoint, final IAspect aspect) {
+    public static Object generatorJDKProxy(IUserService TargetJoinPoint, final IAspect aspect) {
 
         return Proxy.newProxyInstance(
                 /**
                  *   委托类使用的类加载器
                  */
-                targetPoint.getClass().getClassLoader(),
+                TargetJoinPoint.getClass().getClassLoader(),
                 /**
                  * 委托类实现的接口
                  */
-                targetPoint.getClass().getInterfaces(),
+                TargetJoinPoint.getClass().getInterfaces(),
                 /**
                  * 生成的动态代理类关联的 执行处理器，代理我们的业务逻辑被生成的动态代理类回调
                  * 具体逻辑代码执行,返回值为方法执行结果, 在aop模型中，委托类的接口方法称为切点。
@@ -43,7 +43,7 @@ public class JDKDynamicProxyGenerator {
                        boolean prepareAction = aspect.startTransaction(args);
                        if (prepareAction){
                            // 具体逻辑代码执行,返回值为方法执行结果
-                           Object result = method.invoke(targetPoint, args);
+                           Object result = method.invoke(TargetJoinPoint, args);
                            aspect.endTrasaction();
                            return result;
                        }else {

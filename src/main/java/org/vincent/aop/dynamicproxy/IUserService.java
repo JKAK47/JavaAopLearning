@@ -2,7 +2,7 @@ package org.vincent.aop.dynamicproxy;
 
 /**
  * @Package: org.vincent.aop.dynamicproxy <br/>
- * @Description： AOP基于动态代理 实现  <br/>
+ * @Description： AOP基于动态代理 实现； 切点接口，正常的业务接口   <br/>
  * @author: lenovo <br/>
  * @Company: PLCC <br/>
  * @Copyright: Copyright (c) 2019 <br/>

@@ -13,12 +13,12 @@ package org.vincent.aop.cglib;
 public class CustomAspect implements IAspect {
     @Override
     public void startTransaction() {
-        System.out.println("cglib. I get datasource here and start transaction");
+        System.out.println("cglib Aspect.  I get datasource here and start transaction");
     }
 
 
 
     public void endTrasaction() {
-        System.out.println("cglib I get datasource here and end transaction");
+        System.out.println("cglib Aspect. I get datasource here and end transaction");
     }
 }

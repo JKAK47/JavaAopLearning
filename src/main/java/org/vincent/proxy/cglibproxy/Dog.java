@@ -2,7 +2,7 @@ package org.vincent.proxy.cglibproxy;
 
 /**
  * @Package: org.vincent.proxy.cglibproxy <br/>
- * @Description： Cglib 代理模式中 被代理的 委托类 <br/>
+ * @Description： Cglib 代理模式中 被代理的 委托类; 该类是接口功能需要被加强 <br/>
  * @author: lenovo <br/>
  * @Company: PLCC <br/>
  * @Copyright: Copyright (c) 2019 <br/>
