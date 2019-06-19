@@ -12,11 +12,16 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class MainAopTest {
     public static void main(String[] args) {
+        System.out.println("------------------");
         AnnotationConfigApplicationContext configApplicationContext =new AnnotationConfigApplicationContext(AopConfig.class);
         DemoAnnotationService demoAnnotationService = configApplicationContext.getBean(DemoAnnotationService.class);
         DemoMethodService demoMethodService = configApplicationContext.getBean(DemoMethodService.class);
         demoAnnotationService.add();
-       // demoMethodService.add();
+        System.out.println("------------------");
+        demoMethodService.add();
+        System.out.println("------------------");
+        demoAnnotationService.sub();
+        System.out.println("------------------");
         configApplicationContext.close();
     }
 }

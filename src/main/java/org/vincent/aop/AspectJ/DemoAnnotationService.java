@@ -17,4 +17,9 @@ public class DemoAnnotationService {
         System.out.println(" execute add  method annotation.");
         return " Action annotation.";
     }
+    @Action(name = "sub")
+    public String sub(){
+        System.out.println("sub AspectJ ");
+        return  "sub method invoke";
+    }
 }
