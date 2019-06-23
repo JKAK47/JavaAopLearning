@@ -6,7 +6,7 @@ package org.vincent.aop.AspectJ;
  * @date 2019/1/4 - 0:20
  * @ProjectName JavaAopLearning
  * @Description:
- *  AspectJ 案例
+ *
  * https://www.baeldung.com/aspectj
  * https://howtodoinjava.com/spring-aop/spring-aop-aspectj-example-tutorial-using-annotation-config/
  * https://www.mkyong.com/spring3/spring-aop-aspectj-annotation-example/

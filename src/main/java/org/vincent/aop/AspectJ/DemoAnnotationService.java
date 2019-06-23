@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
  * @ClassName DemoAnnotationService.java
  * @date 2019/6/16 - 9:40
  * @ProjectName JavaAopLearning
- * @Description: 使用方法级别注解Action，作为切面建言方法切入的连接点
+ * @Description: 使用方法级别注解Action，作为切面建言方法切入的连接点； 注解拦截
  */
 @Service
 public class DemoAnnotationService {

@@ -26,6 +26,9 @@ public class EventPublisher implements ApplicationEventPublisherAware, Applicati
      */
     private ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * 发布一个事件
+     * */
     public String publisherEvent() {
         String result = "sda";
         context.publishEvent(new DemoEvent(this, result));

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @ClassName Action.java
  * @date 2019/6/16 - 9:38
  * @ProjectName JavaAopLearning
- * @Description: 定义一个方法级别 注解，当作AOP切入 的一个切入点
+ * @Description: 定义一个方法级别 注解，当作AOP切入 的一个切入点判断依据注解
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
