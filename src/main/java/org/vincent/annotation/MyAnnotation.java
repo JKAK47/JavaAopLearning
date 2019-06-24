@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 @ComponentScan
 public @interface MyAnnotation {
     /**
-     * 对原来注解的属性，需要在新的注解重新申明;
+     * 对原来注解的属性，需要在新的注解重新申明; 定義一個別名，一般是用相同的屬性名稱。
      * 说明新自定义注解的属性 basePackages 覆盖了 原来 ComponentScan 注解的 basePackages 属性
      */
-    @AliasFor(annotation = ComponentScan.class ,attribute = "basePackages")
+    @AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
     String[] basePackages() default {};
 }
