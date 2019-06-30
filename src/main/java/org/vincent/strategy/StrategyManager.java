@@ -1,12 +1,17 @@
 package org.vincent.strategy;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,11 +25,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by PengRong .
  */
 @Component
-public class StrategyManager<I, O> implements ApplicationContextAware, InitializingBean {
+public class StrategyManager<I, O> implements ApplicationContextAware, InitializingBean, BeanNameAware ,BeanFactoryAware {
     /**
      * 实现 ApplicationContextAware 接口用于获取 ApplicationContext 实例
      */
     private ApplicationContext applicationContext;
+    /**
+     * 实现 BeanFactoryAware 接口用于获取 BeanFactory 实例
+     */
+    private BeanFactory beanFactory;
     /**
      * 所有的策略实现,以 handler 的type 为key， 对应的handler 实例 为value;
      * 基於Class 類型 自動注入進去
@@ -65,7 +74,7 @@ public class StrategyManager<I, O> implements ApplicationContextAware, Initializ
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         //初始化 handlers
         Map<String, Handler> beansOfType = getBeansOfType(Handler.class);
         for (Map.Entry<String, Handler> handlerEntry : beansOfType.entrySet()) {
@@ -89,4 +98,20 @@ public class StrategyManager<I, O> implements ApplicationContextAware, Initializ
         return (O) process;
     }
 
+    /**
+     * 在beanFactory 创建该类Bean时候 将该bean名字传递进来
+     * @param name
+     */
+    @Override
+    public void setBeanName(String name) {
+        System.out.println(name);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory =beanFactory;
+        Assert.notNull(beanFactory, " beanFactory is not null.");
+        boolean equals = Objects.equals(beanFactory, applicationContext);
+        System.out.println(equals);
+    }
 }

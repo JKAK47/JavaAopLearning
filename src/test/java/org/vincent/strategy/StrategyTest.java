@@ -24,7 +24,7 @@ public class StrategyTest {
     StrategyManager<String, String> strategyManager;
 
     @Test
-    public void test() {
+    public void testexecuteStrategy() {
         Assert.assertNotNull(strategyManager);
         String sdfasdf = strategyManager.executeStrategy(StrategyEnums.NEW, "sdfasdf");/** 传递字符串 返回字符串*/
         System.out.println(sdfasdf);
