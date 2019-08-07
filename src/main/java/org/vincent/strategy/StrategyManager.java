@@ -78,8 +78,10 @@ public class StrategyManager<I, O> implements ApplicationContextAware, Initializ
         //初始化 handlers
         Map<String, Handler> beansOfType = getBeansOfType(Handler.class);
         for (Map.Entry<String, Handler> handlerEntry : beansOfType.entrySet()) {
-            String beanName = handlerEntry.getKey();/** bean 名字*/
-            Handler value = handlerEntry.getValue();/* Handler */
+            /** bean 名字*/
+            String beanName = handlerEntry.getKey();
+            /* Handler */
+            Handler value = handlerEntry.getValue();
             System.out.println("beanName = " + beanName);
             handlers.put(value.getType().getStrategyCode(), value);
 
