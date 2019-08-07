@@ -7,6 +7,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
+import org.vincent.event.pojo.AA;
+
+import java.math.BigDecimal;
 
 /**
  * @author PengRong
@@ -14,7 +17,7 @@ import org.springframework.stereotype.Component;
  * @ClassName EventPublisher.java
  * @date 2019/6/16 - 16:58
  * @ProjectName JavaAopLearning
- * @Description: 事件发布者 ，需要依赖 ApplicationContext
+ * @Description: 事件发布者 ，需要依赖 ApplicationContext； 发布事件者
  */
 @Component
 public class EventPublisher implements ApplicationEventPublisherAware, ApplicationContextAware {
@@ -27,12 +30,17 @@ public class EventPublisher implements ApplicationEventPublisherAware, Applicati
     private ApplicationEventPublisher applicationEventPublisher;
 
     /**
-     * 发布一个事件
+     * 发布一个事件,可以发布一个 继承 ApplicationEvent 的类作为事件实现，
+     * 也可以随便一个类作为 事件Object，发布过程中会被封装成PayloadApplicationEvent 实例，通过 getPayload 方法获取传递的数据
      * */
     public String publisherEvent() {
         String result = "sda";
+
         context.publishEvent(new DemoEvent(this, result));
         applicationEventPublisher.publishEvent(new DemoEvent(this, "applicationEventPublisher"));
+        /** 随便一个类作为 事件Object */
+        applicationEventPublisher.publishEvent(new AA("vv",20, BigDecimal.valueOf(1000)));
+        applicationEventPublisher.publishEvent("XXXXXXXXXOOOOOOO");
         return result;
     }
 

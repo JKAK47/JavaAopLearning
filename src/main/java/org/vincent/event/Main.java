@@ -1,6 +1,7 @@
 package org.vincent.event;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.event.EventListener;
 
 /**
  * @author PengRong
@@ -18,4 +19,6 @@ public class Main {
         bean.publisherEvent();/** 发布事件*/
         configApplicationContext.close();
     }
+
+
 }

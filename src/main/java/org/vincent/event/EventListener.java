@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @ClassName EventListener.java
  * @date 2019/6/16 - 16:56
  * @ProjectName JavaAopLearning
- * @Description: 事件监听者，监听系统里面发生的发生的指定事情。
+ * @Description: 事件监听者，监听系统里面发生的发生的指定事情。订阅者
  */
 @Component
 public class EventListener implements ApplicationListener<DemoEvent> {
