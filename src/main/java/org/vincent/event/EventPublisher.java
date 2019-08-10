@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.vincent.event.pojo.AA;
@@ -25,6 +26,7 @@ public class EventPublisher implements ApplicationEventPublisherAware, Applicati
     @Autowired
     private ApplicationContext context;
 
+
     /**
      * 通过 实现ApplicationEventPublisherAware 接口，自动从Spring Container 容器获取系统能力
      */
@@ -34,10 +36,10 @@ public class EventPublisher implements ApplicationEventPublisherAware, Applicati
      * 发布一个事件,可以发布一个 继承 ApplicationEvent 的类作为事件实现，
      * 也可以随便一个类作为 事件Object，发布过程中会被封装成PayloadApplicationEvent 实例，通过 getPayload 方法获取传递的数据
      * */
-     @Async // 开启异步执行这个方法,就是通过线程池去提交任务
+     @Async // 开启异步执行这个方法,就是通过Spring 管理的线程池去提交任务
     public String publisherEvent() {
-        String result = "sda";
-
+        String result = Thread.currentThread().getName();
+         System.out.println("threadName = "+ result);
         context.publishEvent(new DemoEvent(this, result));
         applicationEventPublisher.publishEvent(new DemoEvent(this, "applicationEventPublisher"));
         /** 随便一个类作为 事件Object */
