@@ -35,16 +35,24 @@ public class EventPublisher implements ApplicationEventPublisherAware, Applicati
     /**
      * 发布一个事件,可以发布一个 继承 ApplicationEvent 的类作为事件实现，
      * 也可以随便一个类作为 事件Object，发布过程中会被封装成PayloadApplicationEvent 实例，通过 getPayload 方法获取传递的数据
-     * */
-     @Async // 开启异步执行这个方法,就是通过Spring 管理的线程池去提交任务
+     */
+    @Async // 开启异步执行这个方法,就是通过Spring 管理的线程池去提交任务
     public String publisherEvent() {
         String result = Thread.currentThread().getName();
-         System.out.println("threadName = "+ result);
+        System.out.println("threadName = " + result);
         context.publishEvent(new DemoEvent(this, result));
         applicationEventPublisher.publishEvent(new DemoEvent(this, "applicationEventPublisher"));
         /** 随便一个类作为 事件Object */
-        applicationEventPublisher.publishEvent(new AA("vv",20, BigDecimal.valueOf(1000)));
+        applicationEventPublisher.publishEvent(new AA("vv", 20, BigDecimal.valueOf(1000)));
         applicationEventPublisher.publishEvent("XXXXXXXXXOOOOOOO");
+        return result;
+    }
+
+    @Async
+    public String publisherEvent(AA aa) {
+        String result = Thread.currentThread().getName();
+        System.out.println("threadName = " + result);
+        applicationEventPublisher.publishEvent(aa);
         return result;
     }
 

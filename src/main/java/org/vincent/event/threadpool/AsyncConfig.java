@@ -56,6 +56,11 @@ public class AsyncConfig implements AsyncConfigurer {
             return t;
         }
     }
+
+    /**
+     * 构建一个线程池Bean
+     * @return
+     */
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
