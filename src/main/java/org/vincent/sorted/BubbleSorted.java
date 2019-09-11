@@ -11,6 +11,7 @@ package org.vincent.sorted;
 public class BubbleSorted {
     /**
      * 冒泡排序第零版
+     * 123
      *
      * @param table
      */
